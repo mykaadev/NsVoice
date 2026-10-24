@@ -126,8 +126,8 @@ In Blueprint, add `Ns Voice Chat Component` to the head of the character. Set it
 - The host relays every packet. A dedicated server pays the bandwidth of every voice.
 
 ## 📚 Documentation
-- [User Guide](https://github.com/mykaadev/NsVoice/blob/main/Docs/UserGuide.md) – Setup, common tasks, settings, and debug tools.
-- [Technical Documentation](https://github.com/mykaadev/NsVoice/blob/main/Docs/TechDocumentation.md) – Architecture, lifetime, extension points, and tests.
+- [User Guide](https://mykaadev.github.io/plugins/nsvoice/user-guide/) – Setup, common tasks, settings, and debug tools.
+- [Technical Documentation](https://mykaadev.github.io/plugins/nsvoice/tech-documentation/) – Architecture, lifetime, extension points, and tests.
 
 <!-- GH_ONLY_START -->
 ## ❤️ Credits
