@@ -21,6 +21,7 @@
   <a href="#-getting-started">🚀 Getting Started</a> •
   <a href="#-api">🔧 API</a> •
   <a href="#-limits">🚧 Limits</a> •
+  <a href="#-documentation">📚 Documentation</a> •
   <a href="#-credits">❤️ Credits</a> •
   <a href="#-support">📞 Support</a> •
   <a href="#-license">📃 License</a>
@@ -124,11 +125,11 @@ In Blueprint, add `Ns Voice Chat Component` to the head of the character. Set it
 - No echo cancellation and no noise gate.
 - The host relays every packet. A dedicated server pays the bandwidth of every voice.
 
-<!-- GH_ONLY_START -->
 ## 📚 Documentation
-- [User Guide](Docs/UserGuide.md) – Setup, common tasks, settings, and debug tools.
-- [Technical Documentation](Docs/TechDocumentation.md) – Architecture, lifetime, extension points, and tests.
+- [User Guide](https://github.com/mykaadev/NsVoice/blob/main/Docs/UserGuide.md) – Setup, common tasks, settings, and debug tools.
+- [Technical Documentation](https://github.com/mykaadev/NsVoice/blob/main/Docs/TechDocumentation.md) – Architecture, lifetime, extension points, and tests.
 
+<!-- GH_ONLY_START -->
 ## ❤️ Credits
 <a href="https://github.com/mykaadev/NsVoice/graphs/contributors"><img src="https://contrib.rocks/image?repo=mykaadev/NsVoice"/></a>
 
