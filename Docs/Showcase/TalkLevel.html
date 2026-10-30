@@ -1,0 +1,20 @@
+<!-- Showcase for the website: the docs link to this file, and the site turns the table into a talk level meter and two mouths. -->
+<figure class="ns-voice" data-loudness="0.3">
+  <figcaption>Hold the Talk button, or focus it and hold Space, to send voice. The level is synthetic: the widget uses no microphone and no audio. The plugin code smooths the level into Get Talk Level on the speaker and on a listener, and decides when On Speaking Changed fires. The widget shows no network delay. The heard level is an example value, because the real one comes from the Opus codec.</figcaption>
+  <table>
+    <thead>
+      <tr><th>Setting</th><th>Value</th><th>Effect</th></tr>
+    </thead>
+    <tbody>
+      <tr data-key="gain"><td>Gain (NsMicSubsystem)</td><td>1.5</td><td>Multiplies the microphone level, from 0 to 4</td></tr>
+      <tr data-key="talk-rise-speed"><td>Talk Rise Speed</td><td>18</td><td>How fast the talk level goes up</td></tr>
+      <tr data-key="talk-fall-speed"><td>Talk Fall Speed</td><td>6</td><td>How fast the talk level goes down</td></tr>
+      <tr data-key="remote-level-gain"><td>Remote Level Gain</td><td>10</td><td>Multiplier of the heard voice level in the talk level of a listener</td></tr>
+      <tr data-key="frames-per-packet"><td>Frames Per Packet</td><td>2</td><td>Opus frames of 20 ms in one packet</td></tr>
+      <tr data-key="level-hold-seconds"><td>Level Hold Seconds</td><td>0.15</td><td>Time after the last packet until the heard level is 0</td></tr>
+      <tr data-key="speech-level"><td>Speech Level</td><td>0.12</td><td>Microphone level that counts as speech</td></tr>
+      <tr data-key="speech-hold-seconds"><td>Speech Hold Seconds</td><td>0.4</td><td>Speech stays on for this time after the level drops</td></tr>
+      <tr data-key="heard-scale"><td>Heard level (example)</td><td>0.1</td><td>Packet peak as a part of the sent level. The widget sets this value. It is not a plugin setting</td></tr>
+    </tbody>
+  </table>
+</figure>

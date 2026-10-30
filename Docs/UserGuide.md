@@ -6,6 +6,8 @@ NsVoice gives proximity voice chat to a multiplayer game. A component on the pla
 
 NsVoice does not bind input, draw UI, or save options. The game binds push to talk, draws the meter, and saves the picked microphone, the gain, and the volumes. NsVoice does not use the voice chat of the online subsystem.
 
+[![The talk level of a speaker and a listener](Showcase/img/talklevel.png)](Showcase/TalkLevel.html)
+
 ## Setup
 
 1. Copy the `NsVoice` folder into the `Plugins` folder of your project.
