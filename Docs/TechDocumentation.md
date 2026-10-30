@@ -6,7 +6,7 @@
 
 | Module | Type | Loading Phase | Content |
 |---|---|---|---|
-| `NsVoice` | Runtime | Default | The subsystems, the components, the log category, and the codec test |
+| `NsVoice` | Runtime | Default | The subsystems, the components, the log category |
 
 The `.uplugin` sets `CanContainContent` to false. The plugin has no `Content/` and no `Config/` folder.
 
@@ -14,7 +14,6 @@ The `.uplugin` sets `CanContainContent` to false. The plugin has no `Content/` a
 
 - `Source/NsVoice/Public` – `NsMicSubsystem.h`, `NsVoiceSubsystem.h`, `NsVoiceChatComponent.h`, `NsVoiceActivityComponent.h`, `NsVoiceModule.h`.
 - `Source/NsVoice/Private` – The `.cpp` files of the public headers.
-- `Source/NsVoice/Private/Tests` – `NsVoiceCodecTest.cpp`.
 
 ### Main Classes
 
@@ -98,17 +97,3 @@ The plugin depends on no other Ns plugin.
 - The host relays every packet. It reaches every client where the pawn is relevant.
 - `bSpeaking` replicates with `COND_SkipOwner` and `OnRep_Speaking`. `ServerSetSpeaking` is `Server, Reliable`.
 - The owner and the host call `OnRep_Speaking` directly. `bShownSpeaking` makes sure that each machine fires the events one time per change.
-
-## Testing
-
-| Test | Flags | What it checks |
-|---|---|---|
-| `NsVoice.Codec` | `EditorContext`, `EngineFilter` | Two frames of a 440 Hz tone encode with no rest into a packet under 400 bytes. The packet decodes to the same sample count, and the peak stays above 8000 |
-
-Run it in **Session Frontend > Automation**, or with `-ExecCmds="Automation RunTests NsVoice"`. The test needs `bEnabled=true` in the `[Voice]` section of `DefaultEngine.ini`.
-
-## Change Rules
-
-- `VoiceSampleRate` and `FrameSamples` are `static constexpr`. Every machine must use the same values, because the packets carry no format data.
-- The decode buffer holds four times `FramesPerPacket` of the receiving component. Keep `FramesPerPacket` the same on every machine of one build.
-- `SetDeviceId` takes the `DeviceId` of `Audio::FCaptureDeviceInfo`. A game saves this ID, so do not change what `FNsMicDevice::Id` holds.

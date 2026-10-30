@@ -160,7 +160,6 @@ Subsystems, set at runtime:
 
 - Log category `LogNsVoice`. Set it to `Verbose` with `Log LogNsVoice Verbose` to see each received packet, with its size and peak.
 - At `Log` level, `LogNsVoice` shows the sample rate when the microphone opens, and warnings when a microphone does not open.
-- The automation test `NsVoice.Codec` makes sure that the Opus encoder and decoder work. Run it in **Tools > Session Frontend > Automation**.
 
 ## Troubleshooting
 
