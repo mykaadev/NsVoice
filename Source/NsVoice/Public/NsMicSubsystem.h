@@ -54,7 +54,8 @@ public:
     /** Returns the sample rate of the open stream, or 0 */
     int32 GetSampleRate() const { return SampleRate; }
 
-    /** Returns the latest loudness from 0 to 1, after the gain */
+    /** Returns the latest loudness from 0 to 1, after the gain. It is 0 while no listener is open */
+    UFUNCTION(BlueprintPure, Category = "Voice")
     float GetLevel() const;
 
     /** Picks the microphone by its device ID. Empty picks the Windows default. An open stream opens again on the new device */
@@ -64,9 +65,11 @@ public:
     const FString& GetDeviceId() const { return DeviceId; }
 
     /** Sets the gain of the microphone, from 0 to 4. The voice chat sends the samples after the gain */
+    UFUNCTION(BlueprintCallable, Category = "Voice")
     void SetGain(float InGain) { Gain = FMath::Clamp(InGain, 0.f, 4.f); }
 
     /** Returns the gain of the microphone */
+    UFUNCTION(BlueprintPure, Category = "Voice")
     float GetGain() const { return Gain; }
 
     /** Opens the stream again on the picked device. Listeners stay open */

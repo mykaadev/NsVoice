@@ -7,13 +7,14 @@
 #include "NsVoiceActivityComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnNsSpeakingChanged, bool /* bSpeaking */);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNsSpeakingChangedDynamic, bool, bSpeaking);
 
 /**
  * Tells every machine when a player speaks
  * The owner reads its microphone level and sends the speech state to the host. The host replicates it to the other players
  * Game code listens to On Speaking Changed, for example a cockpit light or an NPC that turns to the speaker
  */
-UCLASS(ClassGroup = (NsVoice))
+UCLASS(ClassGroup = (NsVoice), meta = (BlueprintSpawnableComponent))
 class NSVOICE_API UNsVoiceActivityComponent : public UActorComponent
 {
     GENERATED_BODY()
@@ -29,6 +30,7 @@ public:
     //~ End UActorComponent Interface
 
     /** Returns true while this player speaks */
+    UFUNCTION(BlueprintPure, Category = "Voice")
     bool IsSpeaking() const { return bSpeaking; }
 
     /** Owner: gives the microphone level from 0 to 1 while the microphone is open */
@@ -49,15 +51,19 @@ private:
 // Variables
 public:
     /** Microphone level that counts as speech */
-    UPROPERTY(EditDefaultsOnly, Category = "Voice", meta = (ClampMin = "0.01", ClampMax = "1.0"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Voice", meta = (ClampMin = "0.01", ClampMax = "1.0"))
     float SpeechLevel = 0.12f;
 
     /** Seconds that speech lasts after the level drops, so short pauses do not stop it */
-    UPROPERTY(EditDefaultsOnly, Category = "Voice", meta = (ClampMin = "0.0"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Voice", meta = (ClampMin = "0.0"))
     float SpeechHoldSeconds = 0.4f;
 
     /** Fires on every machine when this player starts or stops speaking */
     FOnNsSpeakingChanged OnSpeakingChanged;
+
+    /** Blueprint event of On Speaking Changed */
+    UPROPERTY(BlueprintAssignable, Category = "Voice", DisplayName = "On Speaking Changed")
+    FOnNsSpeakingChangedDynamic OnSpeakingChangedEvent;
 
 private:
     /** True while this player speaks */

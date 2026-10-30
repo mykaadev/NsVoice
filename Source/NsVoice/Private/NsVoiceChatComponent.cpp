@@ -3,6 +3,7 @@
 #include "NsVoiceChatComponent.h"
 
 #include "NsMicSubsystem.h"
+#include "NsVoiceActivityComponent.h"
 #include "NsVoiceSubsystem.h"
 #include "NsVoiceModule.h"
 #include "GameFramework/Pawn.h"
@@ -21,10 +22,13 @@ UNsVoiceChatComponent::UNsVoiceChatComponent()
 void UNsVoiceChatComponent::TickComponent(const float DeltaTime, const ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+    TickOwner();
     if (IsTransmitting())
     {
         SendMicrophone();
     }
+    const float RawLevel = GetRawTalkLevel();
+    TalkLevel = FMath::FInterpTo(TalkLevel, RawLevel, DeltaTime, RawLevel > TalkLevel ? TalkRiseSpeed : TalkFallSpeed);
     if (IsPlaying())
     {
         SetVolumeMultiplier(GetPlaybackVolume());
@@ -69,6 +73,41 @@ void UNsVoiceChatComponent::SetTransmitting(const bool bNewTransmitting)
 float UNsVoiceChatComponent::GetVoiceLevel() const
 {
     return GetWorld()->GetTimeSeconds() - LastPacketTime <= LevelHoldSeconds ? LastPeak : 0.f;
+}
+
+float UNsVoiceChatComponent::GetRawTalkLevel() const
+{
+    // The owner does not hear its own voice, so it reads its microphone. Every other machine reads the voice that it hears
+    if (IsTransmitting())
+    {
+        const UNsMicSubsystem* const Mic = UNsMicSubsystem::Get(this);
+        return Mic != nullptr ? FMath::Clamp(Mic->GetLevel(), 0.f, 1.f) : 0.f;
+    }
+    return FMath::Clamp(GetVoiceLevel() * RemoteLevelGain, 0.f, 1.f);
+}
+
+void UNsVoiceChatComponent::TickOwner()
+{
+    const APawn* const Pawn = Cast<APawn>(GetOwner());
+    if (!IsValid(Pawn) || !Pawn->IsLocallyControlled())
+    {
+        return;
+    }
+    if (bTransmitWhenLocallyControlled && !bAutoTransmitDone)
+    {
+        bAutoTransmitDone = true;
+        SetTransmitting(true);
+    }
+    if (!IsTransmitting())
+    {
+        return;
+    }
+    UNsVoiceActivityComponent* const Activity = Pawn->FindComponentByClass<UNsVoiceActivityComponent>();
+    const UNsMicSubsystem* const Mic = UNsMicSubsystem::Get(this);
+    if (Activity != nullptr && Mic != nullptr)
+    {
+        Activity->SetLocalMicLevel(Mic->GetLevel());
+    }
 }
 
 void UNsVoiceChatComponent::SendMicrophone()

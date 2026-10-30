@@ -26,14 +26,24 @@ public:
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     //~ End UActorComponent Interface
 
-    /** Owner: starts or stops sending the microphone */
+    /** Owner: starts or stops sending the microphone. Use it for push to talk, with Transmit When Locally Controlled off */
+    UFUNCTION(BlueprintCallable, Category = "Voice")
     void SetTransmitting(bool bNewTransmitting);
 
     /** Owner: returns true while the microphone is open and sends */
+    UFUNCTION(BlueprintPure, Category = "Voice")
     bool IsTransmitting() const { return MicListener != INDEX_NONE; }
 
     /** Returns the loudness of the voice that this machine hears now, from 0 to 1 */
+    UFUNCTION(BlueprintPure, Category = "Voice")
     float GetVoiceLevel() const;
+
+    /**
+     * Returns how loud this player talks now, from 0 to 1, on every machine. The value is smooth, so it can drive a mouth, a head, or a light
+     * The owner reads its microphone. Every other machine reads the voice that it hears
+     */
+    UFUNCTION(BlueprintPure, Category = "Voice")
+    float GetTalkLevel() const { return TalkLevel; }
 
 protected:
     /** Returns the playback volume. The default is the voice volume of UNsVoiceSubsystem times the volume of this player. Override it for game rules, such as a radio */
@@ -43,6 +53,12 @@ protected:
     virtual float GetPlaybackVolume_Implementation() const;
 
 private:
+    /** Returns the talk level of this frame before the smoothing */
+    float GetRawTalkLevel() const;
+
+    /** Owner: opens the microphone one time when this machine controls the pawn, and gives its level to the voice activity component */
+    void TickOwner();
+
     /** Owner: sends one packet of encoded voice to the host */
     UFUNCTION(Server, Unreliable)
     void ServerSendVoice(const TArray<uint8>& Packet);
@@ -81,6 +97,22 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "Voice", meta = (ClampMin = "0.05"))
     float MaxQueuedSeconds = 0.4f;
 
+    /** True opens the microphone when this machine controls the pawn: an open microphone. False waits for Set Transmitting */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Voice")
+    bool bTransmitWhenLocallyControlled = true;
+
+    /** Multiplier of the heard voice level in the talk level. The heard voice is quieter than the microphone */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Voice|Talk Level", meta = (ClampMin = "0.0"))
+    float RemoteLevelGain = 10.f;
+
+    /** How fast the talk level rises */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Voice|Talk Level", meta = (ClampMin = "0.1"))
+    float TalkRiseSpeed = 18.f;
+
+    /** How fast the talk level falls */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Voice|Talk Level", meta = (ClampMin = "0.1"))
+    float TalkFallSpeed = 6.f;
+
     /** Seconds after the last packet when the voice level falls to zero */
     UPROPERTY(EditDefaultsOnly, Category = "Voice", meta = (ClampMin = "0.05"))
     float LevelHoldSeconds = 0.15f;
@@ -107,6 +139,12 @@ private:
     /** Listener: sound that plays the decoded voice */
     UPROPERTY(Transient)
     TObjectPtr<class USoundWaveProcedural> VoiceWave;
+
+    /** Smooth talk level of this frame */
+    float TalkLevel = 0.f;
+
+    /** Owner: true after the automatic start of the microphone, so push to talk keeps control */
+    bool bAutoTransmitDone = false;
 
     /** Listener: peak of the latest decoded packet */
     float LastPeak = 0.f;

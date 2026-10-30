@@ -3,6 +3,7 @@
 #include "NsVoiceActivityComponent.h"
 
 #include "Net/UnrealNetwork.h"
+#include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 
 UNsVoiceActivityComponent::UNsVoiceActivityComponent()
@@ -58,6 +59,7 @@ void UNsVoiceActivityComponent::OnRep_Speaking()
     }
     bShownSpeaking = bSpeaking;
     OnSpeakingChanged.Broadcast(bSpeaking);
+    OnSpeakingChangedEvent.Broadcast(bSpeaking);
 }
 
 APawn* UNsVoiceActivityComponent::GetPawn() const
